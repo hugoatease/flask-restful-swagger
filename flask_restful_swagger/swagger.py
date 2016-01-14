@@ -24,13 +24,14 @@ def docs(api, apiVersion='0.0', swaggerVersion='1.2',
          resourcePath='/',
          produces=["application/json"],
          api_spec_url='/api/spec',
-         description='Auto generated API docs by flask-restful-swagger'):
+         description='Auto generated API docs by flask-restful-swagger',
+         authorizations=None):
 
   api_add_resource = api.add_resource
 
   def add_resource(resource, path, *args, **kvargs):
     register_once(api, api_add_resource, apiVersion, swaggerVersion, basePath,
-                  resourcePath, produces, api_spec_url, description)
+                  resourcePath, produces, api_spec_url, description, authorizations)
 
     resource = make_class(resource)
     endpoint = swagger_endpoint(api, resource, path)
@@ -62,7 +63,7 @@ def make_class(class_or_instance):
 
 
 def register_once(api, add_resource_func, apiVersion, swaggerVersion, basePath,
-                  resourcePath, produces, endpoint_path, description):
+                  resourcePath, produces, endpoint_path, description, authorizations):
   global api_spec_static
   global resource_listing_endpoint
 
@@ -77,7 +78,8 @@ def register_once(api, add_resource_func, apiVersion, swaggerVersion, basePath,
       'produces': produces,
       'x-api-prefix': '',
       'apis': [],
-      'description': description
+      'description': description,
+      'authorizations': authorizations
     }
 
     def registering_blueprint(setup_state):
@@ -110,7 +112,8 @@ def register_once(api, add_resource_func, apiVersion, swaggerVersion, basePath,
       'spec_endpoint_path': endpoint_path,
       'resourcePath': resourcePath,
       'produces': produces,
-      'description': description
+      'description': description,
+      'authorizations': authorizations
     }
 
     add_resource_func(
